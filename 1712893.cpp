@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-const int truongsinhvien = 9;
+const int truongsinhvien = 8;
 #pragma pack(1)
 typedef struct {
 	const wchar_t* til = L"<title>";
@@ -28,26 +28,26 @@ typedef struct {
 	wchar_t MSSV[11];
 	wchar_t Hovaten[31];
 	wchar_t Khoa[31];
-	wchar_t email[31];
+	//wchar_t email[31];
 	int NienKhoa;
 	wchar_t Ngaysinh[11];
 	wchar_t HinhanhcaNhan[100];
 	wchar_t mota[1001];
 	wchar_t sothich[1001];
 }sinhvien;
-void * taomang(int sophantu,int dolonmoiphantu) {//loi thi tra ve NULL
-	if (sophantu < 0|| dolonmoiphantu <=0)return NULL;
+void * taomang(int sophantu, int dolonmoiphantu) {//loi thi tra ve NULL
+	if (sophantu < 0 || dolonmoiphantu <= 0)return NULL;
 	void * k = calloc(1, sophantu*dolonmoiphantu + sizeof(int));
 	if (k == NULL)return NULL;
 	*(int*)k = sophantu;
 	return (char*)k + sizeof(int);
 }
 int getsizearr(void* a) {//NULL thi tra ve -1
-	if (a!=NULL) return *(int*)((char*)a - sizeof(int));
+	if (a != NULL) return *(int*)((char*)a - sizeof(int));
 	else return -1;
 }
-void * resizearr(void *arr, int sophantumoi,int dolonmoiphantu) {//khong cap phat duoc hoac loi thi tra ve NULL
-	if (sophantumoi < 0 || arr == NULL||dolonmoiphantu<=0)return NULL;
+void * resizearr(void *arr, int sophantumoi, int dolonmoiphantu) {//khong cap phat duoc hoac loi thi tra ve NULL
+	if (sophantumoi < 0 || arr == NULL || dolonmoiphantu <= 0)return NULL;
 	if (sophantumoi == 0)return taomang(sophantumoi, dolonmoiphantu);
 	void * buff = (char*)arr - sizeof(int);
 	buff = realloc(buff, sizeof(int) + sophantumoi*dolonmoiphantu);
@@ -80,7 +80,7 @@ void pushback(void *arr, void *data, int dolonmoiphantu, void(*howtopushback)(vo
 }
 void xoamangsinhvien(sinhvien * a) {
 	if (a != NULL) {
-		if (((char*)a - sizeof(int) != NULL) )free((char*)a - sizeof(int));
+		if (((char*)a - sizeof(int) != NULL))free((char*)a - sizeof(int));
 	}
 }
 void xoamangbatki(void *a) {
@@ -93,9 +93,9 @@ sinhvien* readDatafromcsv(wchar_t * filename) {
 	if (fp == NULL)return NULL;
 	else {
 		sinhvien*k = (sinhvien*)taomang(0, sizeof(sinhvien));
-		while(!feof(fp)){
+		while (!feof(fp)) {
 			sinhvien a;
-			fwscanf(fp, L"%[^,],%[^,],%[^,],%[^,]", &a.MSSV, &a.Hovaten, &a.Khoa,&a.email);
+			fwscanf(fp, L"%[^,],%[^,],%[^,]", &a.MSSV, &a.Hovaten, &a.Khoa);
 			fseek(fp, 1, SEEK_CUR);
 			fwscanf(fp, L"%d", &a.NienKhoa);
 			fseek(fp, 1, SEEK_CUR);
@@ -106,7 +106,7 @@ sinhvien* readDatafromcsv(wchar_t * filename) {
 				int z = wcslen(a.sothich);
 				int flag = 0;
 				for (int i = 0; i < z; i++) {
-					if (a.sothich[i] == 34 || (a.sothich[i] == 44 && flag == 0) ) {
+					if (a.sothich[i] == 34 || (a.sothich[i] == 44 && flag == 0)) {
 						flag = 1;
 						for (int j = i; j < z; j++) {
 							a.sothich[j] = a.sothich[j + 1];
@@ -115,36 +115,36 @@ sinhvien* readDatafromcsv(wchar_t * filename) {
 				}
 			}
 			int z = wcslen(a.sothich);
-			if (z == 1)a.sothich[z-1] = '\0';
+			if (z == 1)a.sothich[z - 1] = '\0';
 			if (z >= 2) {
 				a.sothich[z - 1] = '\0';
 				if (a.sothich[z - 2] == 44) a.sothich[z - 2] = '\0';
 			}
 			pushback(&k, &a, sizeof(sinhvien), pushbackkieusinhvien);// doc du sinh vien cuoi 2 lan ?? :D ?? 
-			
+
 		}
-		k = (sinhvien*)resizearr(k, getsizearr(k)-1, sizeof(sinhvien));// no chay toi ra 11 phan tu trong khi chi co 10 ?? :D ??
+		k = (sinhvien*)resizearr(k, getsizearr(k) - 1, sizeof(sinhvien));// no chay toi ra 11 phan tu trong khi chi co 10 ?? :D ??
 		fclose(fp);
 		return k;
 
 	}
 }
 wchar_t** readHTML(wchar_t* filename) {
-	 FILE *fp = _wfopen(filename, L"r, ccs=UTF-8");
-	 if (fp == NULL)return NULL;
-	 wchar_t ** mang = (wchar_t**)taomang(0, sizeof(wchar_t*));
-	 if (mang == NULL)return NULL;
-	 while (!feof(fp)) {
-		 wchar_t *s = (wchar_t*)calloc(sizeof(wchar_t)*255,1);
+	FILE *fp = _wfopen(filename, L"r, ccs=UTF-8");
+	if (fp == NULL)return NULL;
+	wchar_t ** mang = (wchar_t**)taomang(0, sizeof(wchar_t*));
+	if (mang == NULL)return NULL;
+	while (!feof(fp)) {
+		wchar_t *s = (wchar_t*)calloc(sizeof(wchar_t) * 1002, 1);
 
-		 fgetws(s, 255, fp);
-		 pushback(&mang, s, sizeof(wchar_t*),pushbackkieuwchar_sao);
-		 //free(s);
+		fgetws(s, 1002, fp);
+		pushback(&mang, s, sizeof(wchar_t*), pushbackkieuwchar_sao);
+		//free(s);
 		// wprintf_s(mang[0]);
-	 }
+	}
 	// wprintf_s(L"%d",getsizearr(mang));
-	 fclose(fp);
-	 return mang;
+	fclose(fp);
+	return mang;
 }
 void xoamanghtml(wchar_t** z) {
 	if (z != NULL) {
@@ -158,47 +158,47 @@ danhmuc demchiso(wchar_t** arrhtml) {
 	int length = getsizearr(arrhtml);
 	int flag = 0;
 	for (int i = 0; i < length; i++) {
-		if (wcsstr(arrhtml[i],a.til ) != NULL) a.indexoftil = i;
-		if (wcsstr( arrhtml[i],a.fullname) != NULL) a.indexofname = i;
-		if (wcsstr( arrhtml[i],a.Pdepartment) != NULL)a.indexofPde = i;
-		if (wcsstr(arrhtml[i],a.contact) != NULL)a.indexofcontact=i;
-		if (wcsstr(arrhtml[i],a.picture) != NULL)a.indexofpic=i;
-		if (wcsstr(arrhtml[i],a.gioithieu) != NULL) {
+		if (wcsstr(arrhtml[i], a.til) != NULL) a.indexoftil = i;
+		if (wcsstr(arrhtml[i], a.fullname) != NULL) a.indexofname = i;
+		if (wcsstr(arrhtml[i], a.Pdepartment) != NULL)a.indexofPde = i;
+		if (wcsstr(arrhtml[i], a.contact) != NULL)a.indexofcontact = i;
+		if (wcsstr(arrhtml[i], a.picture) != NULL)a.indexofpic = i;
+		if (wcsstr(arrhtml[i], a.gioithieu) != NULL) {
 			if (flag == 0) {
 				flag = 1;
-				a.indexofintro1=i;
+				a.indexofintro1 = i;
 			}
-			else a.indexofintro2=i;
+			else a.indexofintro2 = i;
 		}
-		if (wcsstr(arrhtml[i],a.dev) != NULL)a.indexofdev=i;
-		if (wcsstr(arrhtml[i],a.mota) != NULL)a.indexofDes=i;
+		if (wcsstr(arrhtml[i], a.dev) != NULL)a.indexofdev = i;
+		if (wcsstr(arrhtml[i], a.mota) != NULL)a.indexofDes = i;
 	}
 	return a;
 }
-void replace(wchar_t * str,wchar_t *pat,int length) {
+void replace(wchar_t * str, wchar_t *pat, int length) {
 	//if (length < 0)return;
 	int oldlength = wcslen(str);
 	if (length > oldlength)return;
 	int newlength = wcslen(pat);
-	memmove(str + newlength, str + length, sizeof(wchar_t)*(oldlength-length+1));
+	memmove(str + newlength, str + length, sizeof(wchar_t)*(oldlength - length + 1));
 	memmove(str, pat, newlength * sizeof(wchar_t));
 
 }
-void xuly1sinhvien(wchar_t** manghtml, sinhvien sv,int *a,danhmuc z) {
-	if (a[0] == 0)wcscpy(sv.MSSV , L"");
+void xuly1sinhvien(wchar_t** manghtml, sinhvien sv, int *a, danhmuc z) {
+	if (a[0] == 0)wcscpy(sv.MSSV, L"");
 	if (a[1] == 0)wcscpy(sv.Hovaten, L"");
 	if (a[2] == 0)wcscpy(sv.Khoa, L"");
-	if (a[3] == 0)wcscpy(sv.email, L"");
-	if (a[4] == 0)sv.NienKhoa = -1;
-	if (a[5] == 0)wcscpy(sv.Ngaysinh, L"");
-	if (a[6] == 0)wcscpy(sv.HinhanhcaNhan, L"");
-	if (a[7] == 0)wcscpy(sv.mota, L"");
-	if (a[8] == 0)wcscpy(sv.sothich, L"");
+	//if (a[3] == 0)wcscpy(sv.email, L"");
+	if (a[3] == 0)sv.NienKhoa = -1;
+	if (a[4] == 0)wcscpy(sv.Ngaysinh, L"");
+	if (a[5] == 0)wcscpy(sv.HinhanhcaNhan, L"");
+	if (a[6] == 0)wcscpy(sv.mota, L"");
+	if (a[7] == 0)wcscpy(sv.sothich, L"");
 	if (1) {
 		int pos1 = 0, pos2 = 0;
 		wchar_t *y1 = wcschr(manghtml[z.indexoftil], L'-');
 		pos1 = y1 - manghtml[z.indexoftil] + 2;
-		y1 = wcschr(manghtml[z.indexoftil] + pos1 -2 , L'<');
+		y1 = wcschr(manghtml[z.indexoftil] + pos1 - 2, L'<');
 		pos2 = y1 - manghtml[z.indexoftil];
 		int length = pos2 - pos1;
 		replace(manghtml[z.indexoftil] + pos1, sv.Hovaten, length);
@@ -208,7 +208,7 @@ void xuly1sinhvien(wchar_t** manghtml, sinhvien sv,int *a,danhmuc z) {
 		wchar_t *y1 = wcschr(manghtml[z.indexofname], L'>');
 		pos1 = y1 - manghtml[z.indexofname] + 1;
 		y1 = wcschr(manghtml[z.indexofname] + pos1 - 1, L'-');
-		pos2 = y1 - manghtml[z.indexofname]-1;
+		pos2 = y1 - manghtml[z.indexofname] - 1;
 		pos3 = pos2 + 3;
 		y1 = wcschr(manghtml[z.indexofname] + pos2, L'<');
 		pos4 = y1 - manghtml[z.indexofname];
@@ -230,21 +230,22 @@ void xuly1sinhvien(wchar_t** manghtml, sinhvien sv,int *a,danhmuc z) {
 	}
 	if (1) {
 		int pos1 = 0, pos2 = 0;
-		wchar_t *y1 = wcschr(manghtml[z.indexofcontact+1], L':');
-		pos1 = y1 - manghtml[z.indexofcontact+1] + 1;
-		y1 = wcschr(manghtml[z.indexofcontact+1] + pos1 - 1, L'\n');
-		pos2 = y1 - manghtml[z.indexofcontact+1];
+		wchar_t *y1 = wcschr(manghtml[z.indexofcontact + 1], L':');
+		pos1 = y1 - manghtml[z.indexofcontact + 1] + 1;
+		y1 = wcschr(manghtml[z.indexofcontact + 1] + pos1 - 1, L'\n');
+		pos2 = y1 - manghtml[z.indexofcontact + 1];
 		int length = pos2 - pos1;
-		replace(manghtml[z.indexofcontact+1] + pos1, sv.email, length);
+		wchar_t u[2] = L"\n";
+		replace(manghtml[z.indexofcontact + 1] + pos1, u, length);
 	}
 	if (1) {
 		int pos1 = 0, pos2 = 0;
-		wchar_t *y1 = wcschr(manghtml[z.indexofpic+1], L'"');
-		pos1 = y1 - manghtml[z.indexofpic+1] + 1;
-		y1 = wcschr(manghtml[z.indexofpic+1] + pos1 , L'"');
-		pos2 = y1 - manghtml[z.indexofpic+1];
+		wchar_t *y1 = wcschr(manghtml[z.indexofpic + 1], L'"');
+		pos1 = y1 - manghtml[z.indexofpic + 1] + 1;
+		y1 = wcschr(manghtml[z.indexofpic + 1] + pos1, L'"');
+		pos2 = y1 - manghtml[z.indexofpic + 1];
 		int length = pos2 - pos1;
-		replace(manghtml[z.indexofpic+1] + pos1, sv.HinhanhcaNhan, length);
+		replace(manghtml[z.indexofpic + 1] + pos1, sv.HinhanhcaNhan, length);
 	}
 	if (1) {
 		for (int i = 1; i <= 5; i++) {
@@ -254,7 +255,7 @@ void xuly1sinhvien(wchar_t** manghtml, sinhvien sv,int *a,danhmuc z) {
 			if (i == 2) wcscpy(a, sv.MSSV);
 			if (i == 3) wcscpy(a, sv.Khoa);
 			if (i == 4) wcscpy(a, sv.Ngaysinh);
-			if (i == 5) wcscpy(a, sv.email);
+			//if (i == 5) wcscpy(a, sv.email);
 			if (i != 3) {
 				wchar_t *y1 = wcschr(manghtml[z.indexofintro1 + i], L':');
 				pos1 = y1 - manghtml[z.indexofintro1 + i] + 2;
@@ -265,35 +266,40 @@ void xuly1sinhvien(wchar_t** manghtml, sinhvien sv,int *a,danhmuc z) {
 			}
 			else {
 				wchar_t *y1 = wcschr(manghtml[z.indexofintro1 + i], L' ');
-				for(int j=1;j<=2;j++)y1= wcschr(y1+1, L' ');
+				for (int j = 1; j <= 2; j++)y1 = wcschr(y1 + 1, L' ');
 				pos1 = y1 - manghtml[z.indexofintro1 + i] + 1;
 				y1 = wcschr(manghtml[z.indexofintro1 + i] + pos1 - 1, L'<');
 				pos2 = y1 - manghtml[z.indexofintro1 + i];
 				int length = pos2 - pos1;
+				if (i == 5)wcscpy(a, L"\n");
 				replace(manghtml[z.indexofintro1 + i] + pos1, a, length);
 			}
-			
+
 		}
 		for (int i = 1; i <= 2; i++) {
 			wchar_t a[255] = { 0 };
-			if (i == 1) wcscpy(a, sv.sothich);
-			if (i == 2) wcscpy(a,sv.sothich);
-			int pos1 = 0, pos2 = 0;
-			wchar_t *y1 = wcschr(manghtml[z.indexofintro2+i], L'>');
-			pos1 = y1 - manghtml[z.indexofintro2 + i] + 1;
-			y1 = wcschr(manghtml[z.indexofintro2 + i] + pos1, L'<');
-			pos2 = y1 - manghtml[z.indexofintro2 + i];
-			int length = pos2 - pos1;
-			replace(manghtml[z.indexofintro2 + i] + pos1, a, length);
+			if (i == 1) {
+				wcscpy(a, sv.sothich);
+				//if (i == 2) wcscpy(a, sv.sothich);
+				int pos1 = 0, pos2 = 0;
+				wchar_t *y1 = wcschr(manghtml[z.indexofintro2 + i], L'>');
+				pos1 = y1 - manghtml[z.indexofintro2 + i] + 1;
+				y1 = wcschr(manghtml[z.indexofintro2 + i] + pos1, L'<');
+				pos2 = y1 - manghtml[z.indexofintro2 + i];
+				int length = pos2 - pos1;
+				replace(manghtml[z.indexofintro2 + i] + pos1, a, length);
+			}
+			if (i == 2)wcscpy(manghtml[z.indexofintro2 + i], L"\n");
+
 		}
 	}
 	if (1) {//ham replace co van de trong trg hop nay
 		int pos1 = 0, pos2 = 0;
-		wchar_t *y1 = wcschr(manghtml[z.indexofDes+1], L' ');
+		wchar_t *y1 = wcschr(manghtml[z.indexofDes + 1], L' ');
 		int i = 0;
-		while (manghtml[z.indexofDes + 1][i] == L' '||manghtml[z.indexofDes+1][i] == L'\t')i++;
+		while (manghtml[z.indexofDes + 1][i] == L' ' || manghtml[z.indexofDes + 1][i] == L'\t')i++;
 		pos1 = i;
-		y1 = wcschr(manghtml[z.indexofDes + 1] + pos1+1, L'.');
+		y1 = wcschr(manghtml[z.indexofDes + 1] + pos1 + 1, L'.');
 		pos2 = y1 - manghtml[z.indexofDes + 1];
 		int length = pos2 - pos1;
 		replace(manghtml[z.indexofDes + 1] + pos1, sv.mota, length);
@@ -301,9 +307,9 @@ void xuly1sinhvien(wchar_t** manghtml, sinhvien sv,int *a,danhmuc z) {
 	if (1) {
 		int pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0, i = 0;
 		wchar_t *y1 = wcschr(manghtml[z.indexofdev], L' ');
-		while (manghtml[z.indexofdev][i] == L'\t'|| manghtml[z.indexofdev][i] == L' ')i++;
+		while (manghtml[z.indexofdev][i] == L'\t' || manghtml[z.indexofdev][i] == L' ')i++;
 		pos1 = i;
-		y1 = wcschr(manghtml[z.indexofdev]+pos1, L'-');
+		y1 = wcschr(manghtml[z.indexofdev] + pos1, L'-');
 		pos2 = y1 - manghtml[z.indexofdev] - 1;
 		pos3 = pos2 + 3;
 		y1 = wcschr(manghtml[z.indexofdev], L'<');
@@ -314,8 +320,8 @@ void xuly1sinhvien(wchar_t** manghtml, sinhvien sv,int *a,danhmuc z) {
 		replace(manghtml[z.indexofdev] + pos1, L"1712893", length1);
 	}
 }
-void menu(wchar_t* htmlfilename, sinhvien* mangsinhvien,danhmuc z) {
-	int a[truongsinhvien] = { 1,1,1,1,1,1,1,1,1 };
+void menu(wchar_t* htmlfilename, sinhvien* mangsinhvien, danhmuc z) {
+	int a[truongsinhvien] = { 1,1,1,1,1,1,1,1 };
 	while (1) {
 		wchar_t** manghtml = readHTML(htmlfilename);//do trong quá trình đọc thì nếu chọn xóa phần mô tả thì tại dòng mô tả sẽ là dòng trắng nên replace bị lỗi và không có dữ liệu gốc để cho các lần viết sau ==> đọc lại file html.(cách khác là tạo 1 mảng html tạm).
 		if (manghtml == NULL)return;
@@ -338,7 +344,7 @@ void menu(wchar_t* htmlfilename, sinhvien* mangsinhvien,danhmuc z) {
 				xuly1sinhvien(manghtml, mangsinhvien[i], a, z);
 				wchar_t z[255] = { L"C:\\Users\\USER\\Desktop\\Website\\" };
 				wcscat(z, mangsinhvien[i].MSSV);
-				FILE *fp = _wfopen(wcscat(z,L".htm"), L"w, ccs=UTF-8");
+				FILE *fp = _wfopen(wcscat(z, L".htm"), L"w, ccs=UTF-8");
 				for (int j = 0; j < sodonghtml; j++)fputws(manghtml[j], fp);
 				fclose(fp);
 			}
@@ -346,7 +352,7 @@ void menu(wchar_t* htmlfilename, sinhvien* mangsinhvien,danhmuc z) {
 		if (n == 2) {
 			int soluongsinhvien = getsizearr(mangsinhvien);
 			for (int i = 0; i < soluongsinhvien; i++) {
-				wprintf(L"%d) %ls,%ls,%ls,%ls,%d,%ls,%ls,%ls,%ls\n", i, mangsinhvien[i].MSSV, mangsinhvien[i].Hovaten, mangsinhvien[i].Khoa, mangsinhvien[i].email, mangsinhvien[i].NienKhoa, mangsinhvien[i].Ngaysinh, mangsinhvien[i].HinhanhcaNhan, mangsinhvien[i].mota, mangsinhvien[i].sothich);
+				wprintf(L"%d) %ls,%ls,%ls,%d,%ls,%ls,%ls,%ls\n", i, mangsinhvien[i].MSSV, mangsinhvien[i].Hovaten, mangsinhvien[i].Khoa, mangsinhvien[i].NienKhoa, mangsinhvien[i].Ngaysinh, mangsinhvien[i].HinhanhcaNhan, mangsinhvien[i].mota, mangsinhvien[i].sothich);
 			}
 			int index;
 			wprintf(L"Mời bạn nhập chỉ số sinh viên(nhập sai thì mặc định là 0): ");
@@ -369,13 +375,13 @@ void menu(wchar_t* htmlfilename, sinhvien* mangsinhvien,danhmuc z) {
 				wprintf(L"0) Mã số sinh viên\n");
 				wprintf(L"1) Họ và tên\n");
 				wprintf(L"2) Khoa\n");
-				wprintf(L"3) Email\n");
-				wprintf(L"4) Khóa\n");
-				wprintf(L"5) Ngày sinh\n");
-				wprintf(L"6) Hình cá nhân\n");
-				wprintf(L"7) Mô tả\n");
-				wprintf(L"8) Sở thích\n");
-				wprintf(L"9) Ngưng lựa chọn và bắt đầu xuất page\n");				
+				//wprintf(L"3) Email\n");
+				wprintf(L"3) Khóa\n");
+				wprintf(L"4) Ngày sinh\n");
+				wprintf(L"5) Hình cá nhân\n");
+				wprintf(L"6) Mô tả\n");
+				wprintf(L"7) Sở thích\n");
+				wprintf(L"8) Ngưng lựa chọn và bắt đầu xuất page\n");
 				wprintf(L"Mời bạn nhập lựa chọn:");
 				wscanf(L"%d", &index1);
 				if (index1 == 9) break;
@@ -388,7 +394,7 @@ void menu(wchar_t* htmlfilename, sinhvien* mangsinhvien,danhmuc z) {
 			wscanf(L"%d", &index);
 			if (index >= soluongsinhvien || index < 0)index = 0;
 			sinhvien temp = mangsinhvien[index];
-			xuly1sinhvien(manghtml,temp, a, z);
+			xuly1sinhvien(manghtml, temp, a, z);
 			wchar_t z[255] = { L"C:\\Users\\USER\\Desktop\\Website\\" };
 			wcscat(z, mangsinhvien[index].MSSV);
 			FILE *fp = _wfopen(wcscat(z, L".htm"), L"w, ccs=UTF-8");
@@ -403,8 +409,8 @@ void wmain() {
 	_setmode(_fileno(stdout), _O_U16TEXT); //needed for output
 	_setmode(_fileno(stdin), _O_U16TEXT); //needed for input
 	sinhvien* mangsinhvien = readDatafromcsv(L"C:\\Users\\USER\\Desktop\\Website\\sinhvien.csv");
-	if (mangsinhvien == NULL)return ;
-	wchar_t *htmllink =(L"C:\\Users\\USER\\Desktop\\Website\\template\\1212123.htm");
+	if (mangsinhvien == NULL)return;
+	wchar_t *htmllink = (L"C:\\Users\\USER\\Desktop\\Website\\template\\1212123.htm");
 	wchar_t **html = readHTML(htmllink);
 	danhmuc z = demchiso(html);
 	xoamanghtml(html);
