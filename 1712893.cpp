@@ -410,8 +410,8 @@ void menu(wchar_t* htmlfilename, sinhvien* mangsinhvien, danhmuc z) {
 			wcscat(duongdan, L".htm");
 			xoamanghtml(manghtml);
 			manghtml = readHTML(duongdan);
-			if (manghtml != NULL&&flag4 == 0)flag4 = 1;//da them email va so dien thoai
 			if (manghtml == NULL || flag4 == 1) { manghtml = readHTML(htmlfilename);	flag4 = 0;		xuly1sinhvien_2(manghtml, mangsinhvien[index], a, z); }
+			if (manghtml != NULL&&flag4 == 0)flag4 = 1;//da them email va so dien thoai
 			chisomoi = demchiso(manghtml);
 			wprintf(L"bấm 1 để thêm email\n");
 			wprintf(L"bấm 2 để thêm số điện thoại\n");
