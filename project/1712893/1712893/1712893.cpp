@@ -328,7 +328,9 @@ void menu(wchar_t* htmlfilename, sinhvien* mangsinhvien, danhmuc z) {
 		wprintf(L"Mời bạn nhập lựa chọn: ");
 		wscanf(L"%d", &n);
 		if (n > 5 || n < 0)n = 0;
-		if (n == 0)break;
+		if (n == 0) { 
+			if (manghtml != NULL)xoamanghtml(manghtml); 
+			break; }
 		if (n == 1) {
 			int soluongsinhvien = getsizearr(mangsinhvien);
 			for (int i = 0; i < soluongsinhvien; i++)
@@ -437,7 +439,7 @@ void menu(wchar_t* htmlfilename, sinhvien* mangsinhvien, danhmuc z) {
 					count++;
 				}
 				if (count > 0)count--;
-				if (chisomoi.indexofintro1 + count >= getsizearr(manghtml)||add==NULL) {
+				if (chisomoi.indexofintro1 + count >= getsizearr(manghtml) || add == NULL) {
 					wprintf(L"không thêm được vì không đúng định dạng");
 					system("pause");
 					continue;

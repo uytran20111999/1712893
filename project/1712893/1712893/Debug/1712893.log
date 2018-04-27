@@ -1,2 +1,4 @@
-﻿  1712893.vcxproj -> C:\Users\USER\Desktop\Website\project\1712893\Debug\1712893.exe
-  1712893.vcxproj -> C:\Users\USER\Desktop\Website\project\1712893\Debug\1712893.pdb (Full PDB)
+﻿  1712893.cpp
+c:\users\user\videos\testkey\1712893-master\project\1712893\1712893\1712893.cpp(434): warning C4101: 'temdum': unreferenced local variable
+  1712893.vcxproj -> C:\Users\USER\Videos\testkey\1712893-master\project\1712893\Debug\1712893.exe
+  1712893.vcxproj -> C:\Users\USER\Videos\testkey\1712893-master\project\1712893\Debug\1712893.pdb (Full PDB)
